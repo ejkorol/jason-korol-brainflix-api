@@ -11,6 +11,11 @@ const api = express();
 
 api.use(cors());
 api.use(express.json());
+api.use((req, _res, next) => {
+  console.log("ok, incoming");
+  console.log(req.query.api_key);
+  next();
+});
 
 api.use("/videos", videoRoutes);
 
