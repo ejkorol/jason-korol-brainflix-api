@@ -1,30 +1,50 @@
 import express from "express";
 import fs from "fs";
-const videoRouter = express.Router();
-
 const filePath = "./data/videos.json";
 
+const videoRouter = express.Router();
+
+/* generate uuid */
 function uuid() {
   return Math.random().toString(16).slice(2);
 };
 
-const readVideos = () => {
-  const videos = fs.readFileSync(filePath);
-  return JSON.parse(videos);
+/* read file data */
+function readData() {
+  const data = fs.readFileSync(filePath);
+  return JSON.parse(data);
 };
 
+/* write file data */
+function writeData(data) {
+  fs.writeFileSync(filePath, JSON.stringify(data));
+};
+
+/* get all video data (debugging purposes) */
+videoRouter
+  .route("/all")
+
+  /* get video (list), get video (details) */
+  .get((_req, res) => {
+    const videoData = readData();
+    res.json(videoData);
+  });
+
+/* base routes */
 videoRouter
   .route("/")
 
+  /* get all videos (list) */
   .get((_req, res) => {
-    const parsedVideosData = readVideos();
-    res.json(parsedVideosData);
+    const videosData = readData();
+    res.json(videosData.videoList);
   })
 
+  /* post new video to videoList and videoDetails */
   .post((req, res) => {
-    const timestamp = new Date();
+    const timestamp = Date.now();
     const id = uuid();
-    const parsedVideosData = readVideos();
+    const videoData = readData();
     const { title, channel, image, description } = req.body;
     const newVideoListEntry = {
       id: id,
@@ -45,15 +65,17 @@ videoRouter
       timestamp: timestamp,
       comments: [],
     };
-    parsedVideosData.videoList.push(newVideoListEntry);
-    parsedVideosData.videoDetails.push(newVideoDetailsEntry);
-    fs.writeFileSync(filePath, JSON.stringify(parsedVideosData));
+    videoData.videoList.push(newVideoListEntry);
+    videoData.videoDetails.push(newVideoDetailsEntry);
+    writeData(videoData);
     res.status(201).json(newVideoDetailsEntry);
-  })
+  });
 
+/* routes by id */
 videoRouter
   .route("/:videoId")
 
+  /* get video by id */
   .get((req, res) => {
     const { videoId } = req.params;
     const parsedVideosData = readVideos();
@@ -67,18 +89,19 @@ videoRouter
     };
   })
 
+  /* delete video by id */
   .delete((req, res) => {
     const { videoId } = req.params;
-    let parsedVideosData = readVideos();
-    const foundVideo = parsedVideosData.videoList.find((video) => {
-      return video.id === videoId
-    })
+    let videoData = readData();
+    const foundVideo = videoData.videoList.find((video) => {
+      return video.id === videoId;
+    });
     if (foundVideo) {
-      for (let i = 0; i < parsedVideosData.videoList.length; i++) {
-        if (parsedVideosData.videoList[i].id === videoId) {
-          parsedVideosData.videoList.splice(i, i + 1);
-          parsedVideosData.videoDetails.splice(i, i + 1);
-          fs.writeFileSync(filePath, JSON.stringify(parsedVideosData));
+      for (let i = 0; i < videoData.videoList.length; i++) {
+        if (videoData.videoList[i].id === videoId) {
+          videoData.videoList.splice(i, i + 1);
+          videoData.videoDetails.splice(i, i + 1);
+          writeData(videoData);
           res.status(205).json(foundVideo);
         } else {
           res.status(500).send("Something went wrong");
@@ -86,7 +109,7 @@ videoRouter
       };
     } else {
       res.status(404).send("No video by that id exists.")
-    }
+    };
   });
 
 export default videoRouter;
