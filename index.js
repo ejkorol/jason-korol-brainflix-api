@@ -4,6 +4,7 @@ import "dotenv/config";
 
 /* ROUTES */
 import videoRoutes from "./routes/videos.js";
+import commentRoutes from "./routes/comments.js";
 
 const PORT_ALT = 5051;
 const PORT = process.env.PORT || PORT_ALT;
@@ -31,6 +32,7 @@ api.use((req, res, next) => {
 /* ***************************** */
 
 api.use("/videos", videoRoutes);
+api.use("/videos", commentRoutes);
 
 api.get("/", (_req, res) => {
   res.send("ok, root route");
