@@ -17,8 +17,9 @@ export const getVideoList = (_req, res) => {
 };
 
 export const postVideo = (req, res) => {
-  const { title, channel, image, description } = req.body;
-  const newVideoDetailsEntry = postVideoService({ title, channel, image, description });
+  const { title, channel, description } = req.body;
+  const imageFile = req.file.filename;
+  const newVideoDetailsEntry = postVideoService({ title, channel, imageFile, description });
   res.json(newVideoDetailsEntry);
 };
 

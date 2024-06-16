@@ -1,3 +1,4 @@
+import fs from "fs";
 import uuid from "../utils/functions/generateIds.js";
 import readData from "../utils/functions/readData.js";
 import writeData from "../utils/functions/writeData.js";
@@ -11,19 +12,25 @@ export const getVideoList = () => {
   return videoData.videoList;
 };
 
-export const postVideo = (videoDetails) => {
+export const postVideo = ({ title, channel, imageFile, description }) => {
   const timestamp = Date.now();
   const id = uuid();
   const videoData = readData();
+  const UPLOAD_PATH = process.env.UPLOAD_PATH;
 
   const newVideoListEntry = {
     id,
-    ...videoDetails // <= thank you george
+    title,
+    channel,
+    image: `${UPLOAD_PATH}/${imageFile}`
   };
 
   const newVideoDetailsEntry = {
     id,
-    ...videoDetails,
+    title,
+    channel,
+    description,
+    image: `${UPLOAD_PATH}/${imageFile}`,
     views: 0,
     likes: 0,
     duration: 0,
@@ -46,9 +53,19 @@ export const getVideoById = (videoId) => {
 
 export const deleteVideoById = (videoId) => {
   const videoData = readData();
-  const foundVideoIndex = videoData.videoDetails.findIndex(video => video.id === videoId);
+  let foundVideoIndex = null;
+  const foundVideo = videoData.videoDetails.find((video, index) => {
+    video.id === videoId;
+    foundVideoIndex = index;
+    return video;
+  });
 
-  if (foundVideoIndex !== -1) {
+  if (foundVideoIndex !== null) {
+    fs.unlink(`${foundVideo.image}`, (e) => {
+      if (e) {
+        console.error(`Error occured: ${e}`);
+      };
+    });
     const [deletedVideo] = videoData.videoList.splice(foundVideoIndex, 1);
     videoData.videoDetails.splice(foundVideoIndex, 1);
     writeData(videoData);

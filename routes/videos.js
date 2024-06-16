@@ -1,4 +1,5 @@
 import express from "express";
+import upload from "../middlewares/upload.js";
 
 import {
   getAllVideosData,
@@ -17,7 +18,7 @@ videoRouter
 videoRouter
   .route("/")
   .get(getVideoList)
-  .post(postVideo);
+  .post(upload, postVideo);
 
 videoRouter
   .route("/:videoId")
