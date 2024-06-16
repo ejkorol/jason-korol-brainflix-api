@@ -63,19 +63,17 @@ export const getVideoById = (videoId) => {
 
 export const deleteVideoById = (videoId) => {
   const videoData = readData();
-  let foundVideoIndex = null;
-  const foundVideo = videoData.videoDetails.find((video, index) => {
-    video.id === videoId;
-    foundVideoIndex = index;
-    return video;
-  });
+  const foundVideoIndex = videoData.videoDetails.findIndex(video => video.id === videoId);
 
-  if (foundVideoIndex !== null) {
+  if (foundVideoIndex !== -1) {
+    const foundVideo = videoData.videoDetails[foundVideoIndex];
+
     fs.unlink(`./public${foundVideo.image}`, (e) => {
       if (e) {
-        console.error(`Error occured: ${e}`);
+        console.error(`Error ${e}`);
       };
     });
+
     const [deletedVideo] = videoData.videoList.splice(foundVideoIndex, 1);
     videoData.videoDetails.splice(foundVideoIndex, 1);
     writeData(videoData);
