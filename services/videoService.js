@@ -9,7 +9,11 @@ export const getAllVideosData = () => {
 
 export const getVideoList = () => {
   const videoData = readData();
-  return videoData.videoList;
+  if (videoData) {
+    return videoData.videoList;
+  } else {
+    throw new Error("No videos");
+  };
 };
 
 export const postVideo = ({ title, channel, imageFile, description }) => {
@@ -17,38 +21,45 @@ export const postVideo = ({ title, channel, imageFile, description }) => {
   const id = uuid();
   const videoData = readData();
   const UPLOAD_PATH = process.env.UPLOAD_PATH;
+  if (videoData.videoList && videoData.videoDetails) {
+    const newVideoListEntry = {
+      id,
+      title,
+      channel,
+      image: `${UPLOAD_PATH}/${imageFile}`
+    };
 
-  const newVideoListEntry = {
-    id,
-    title,
-    channel,
-    image: `${UPLOAD_PATH}/${imageFile}`
+    const newVideoDetailsEntry = {
+      id,
+      title,
+      channel,
+      description,
+      image: `${UPLOAD_PATH}/${imageFile}`,
+      views: "",
+      likes: 0,
+      duration: "",
+      timestamp,
+      comments: []
+    };
+
+    videoData.videoList.push(newVideoListEntry);
+    videoData.videoDetails.push(newVideoDetailsEntry);
+    writeData(videoData);
+
+    return newVideoDetailsEntry;
+  } else {
+    throw new Error("JSON file not formatted correctly.");
   };
-
-  const newVideoDetailsEntry = {
-    id,
-    title,
-    channel,
-    description,
-    image: `${UPLOAD_PATH}/${imageFile}`,
-    views: 0,
-    likes: 0,
-    duration: 0,
-    timestamp,
-    comments: []
-  };
-
-  videoData.videoList.push(newVideoListEntry);
-  videoData.videoDetails.push(newVideoDetailsEntry);
-  writeData(videoData);
-
-  return newVideoDetailsEntry;
 };
 
 export const getVideoById = (videoId) => {
   const videoData = readData();
   const foundVideo = videoData.videoDetails.find(video => video.id === videoId);
-  return foundVideo;
+  if (foundVideo) {
+    return foundVideo;
+  } else {
+    throw new Error("Video not found");
+  };
 };
 
 export const deleteVideoById = (videoId) => {
@@ -70,7 +81,7 @@ export const deleteVideoById = (videoId) => {
     videoData.videoDetails.splice(foundVideoIndex, 1);
     writeData(videoData);
     return deletedVideo;
+  } else {
+    throw new Error("Video not found");
   };
-
-  return null;
 };

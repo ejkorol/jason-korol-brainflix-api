@@ -8,37 +8,49 @@ import {
 
 export const getAllVideosData = (_req, res) => {
   const videoData = getAllVideosDataService();
-  res.json(videoData);
+  if (videoData) {
+    res.json(videoData);
+  } else {
+    res.status(500).send("JSON file not formatted correctly")
+  };
 };
 
 export const getVideoList = (_req, res) => {
-  const videoData = getVideoListService();
-  res.json(videoData);
+  try {
+    const videoData = getVideoListService();
+    res.json(videoData);
+  } catch (e) {
+    res.status(404).send(e.message);
+  };
 };
 
 export const postVideo = (req, res) => {
   const { title, channel, description } = req.body;
   const imageFile = req.file.filename;
-  const newVideoDetailsEntry = postVideoService({ title, channel, imageFile, description });
-  res.json(newVideoDetailsEntry);
+  try {
+    const newVideoDetailsEntry = postVideoService({ title, channel, imageFile, description });
+    res.json(newVideoDetailsEntry);
+  } catch (e) {
+    res.status(500).send(e.message);
+  };
 };
 
 export const getVideoById = (req, res) => {
   const { videoId } = req.params;
-  const foundVideo = getVideoByIdService(videoId);
-  if (foundVideo) {
+  try {
+    const foundVideo = getVideoByIdService(videoId);
     res.status(302).json(foundVideo);
-  } else {
-    res.status(404).send("No video by that id exists.");
+  } catch (e) {
+    res.status(404).send(e.message);
   };
 };
 
 export const deleteVideoById = (req, res) => {
   const { videoId } = req.params;
-  const deletedVideo = deleteVideoByIdService(videoId);
-  if (deletedVideo) {
+  try {
+    const deletedVideo = deleteVideoByIdService(videoId);
     res.status(205).json(deletedVideo);
-  } else {
-    res.status(404).send("No video by that id exists.");
+  } catch (e) {
+    res.status(404).send(e.message);
   };
 };
