@@ -20,13 +20,12 @@ export const postVideo = ({ title, channel, imageFile, description }) => {
   const timestamp = Date.now();
   const id = uuid();
   const videoData = readData();
-  const UPLOAD_PATH = process.env.UPLOAD_PATH;
   if (videoData.videoList && videoData.videoDetails) {
     const newVideoListEntry = {
       id,
       title,
       channel,
-      image: `${UPLOAD_PATH}/${imageFile}`
+      image: `/images/${imageFile}`
     };
 
     const newVideoDetailsEntry = {
@@ -34,7 +33,7 @@ export const postVideo = ({ title, channel, imageFile, description }) => {
       title,
       channel,
       description,
-      image: `${UPLOAD_PATH}/${imageFile}`,
+      image: `/images/${imageFile}`,
       views: "",
       likes: 0,
       duration: "",
