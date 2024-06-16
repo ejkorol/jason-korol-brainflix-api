@@ -19,13 +19,14 @@ const api = express();
 api.use(cors({ origin: CORS_URL }));
  
 api.use(express.json());
+api.use(express.static("public"));
 
 api.use((req, res, next) => {
   if (req.query.api_key) {
     next();
   } else {
     res.status(401).send("Please have an API key present.")
-  }
+  };
 });
 
 /* ***************************** */
