@@ -25,6 +25,24 @@ export const postComment = (videoId, name, comment) => {
   throw new Error("Video not found");
 };
 
+export const likeComment = (videoId, commentId) => {
+  let videoData = readData();
+  let foundVideo = videoData.videoDetails.find(video => video.id === videoId);
+
+  if (foundVideo) {
+    let foundComment = foundVideo.comments.find(comment => comment.id === commentId);
+    if (foundComment) {
+      foundComment.likes++;
+      writeData(videoData);
+      return foundComment;
+    } else {
+      throw new Error("Comment not found");
+    };
+  } else {
+    throw new Error("Video not found");
+  };
+};
+
 export const deleteComment = (videoId, commentId) => {
   let videoData = readData();
   let foundVideo = videoData.videoDetails.find(video => video.id === videoId);

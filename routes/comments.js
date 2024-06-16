@@ -2,6 +2,7 @@ import express from "express";
 
 import {
   postComment,
+  likeComment,
   deleteComment
 } from "../controllers/commentsController.js";
 
@@ -13,6 +14,7 @@ commentRouter
 
 commentRouter
   .route("/:videoId/comments/:commentId")
+  .patch(likeComment)
   .delete(deleteComment);
 
 export default commentRouter;
