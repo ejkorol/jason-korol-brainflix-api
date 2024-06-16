@@ -34,7 +34,7 @@ export const postVideo = ({ title, channel, imageFile, description }) => {
       channel,
       description,
       image: `/images/${imageFile}`,
-      views: "",
+      views: "0",
       likes: 0,
       duration: "",
       timestamp,
