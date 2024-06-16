@@ -39,7 +39,7 @@ export const getVideoById = (req, res) => {
   const { videoId } = req.params;
   try {
     const foundVideo = getVideoByIdService(videoId);
-    res.status(302).json(foundVideo);
+    res.status(200).json(foundVideo);
   } catch (e) {
     res.status(404).send(e.message);
   };

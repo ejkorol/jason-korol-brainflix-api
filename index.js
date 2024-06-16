@@ -6,6 +6,7 @@ import "dotenv/config";
 import videoRoutes from "./routes/videos.js";
 import commentRoutes from "./routes/comments.js";
 
+const CORS_URL = process.env.CORS_URL;
 const PORT_ALT = 5051;
 const PORT = process.env.PORT || PORT_ALT;
 
@@ -15,7 +16,7 @@ const api = express();
 /*           MIDDLEWARE          */
 /* ***************************** */
 
-api.use(cors());
+api.use(cors({ origin: CORS_URL }));
  
 api.use(express.json());
 
