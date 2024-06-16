@@ -71,7 +71,7 @@ export const deleteVideoById = (videoId) => {
   });
 
   if (foundVideoIndex !== null) {
-    fs.unlink(`${foundVideo.image}`, (e) => {
+    fs.unlink(`./public${foundVideo.image}`, (e) => {
       if (e) {
         console.error(`Error occured: ${e}`);
       };
