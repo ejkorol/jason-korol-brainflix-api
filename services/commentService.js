@@ -4,12 +4,12 @@ import writeData from "../utils/functions/writeData.js";
 
 export const postComment = (videoId, name, comment) => {
   const id = uuid();
-  const timeStamp = Date.now();
+  const timestamp = Date.now();
   const newComment = {
     id,
     name,
     comment,
-    timeStamp,
+    timestamp,
     likes: 0
   };
 
